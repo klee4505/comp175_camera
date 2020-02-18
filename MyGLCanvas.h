@@ -16,6 +16,7 @@
 #include "Cylinder.h"
 #include "Cone.h"
 #include "Sphere.h"
+#include "Special_Shape.h"
 
 #include "Camera.h"
 
@@ -37,6 +38,8 @@ public:
 	Cone* cone;
 	Sphere* sphere;
 	Shape* shape;
+	Sword* sword;
+	float scale;
 
 	Camera* camera;
 
