@@ -243,50 +243,50 @@ MyAppWindow::MyAppWindow(int W, int H, const char*L) : Fl_Window(W, H, L) {
 
 		radioPack->end();
 
-	//Fl_Pack* cameraPack = new Fl_Pack(w() - 100, 30, 100, h(), "Scene");
-	//cameraPack->box(FL_DOWN_FRAME);
-	//cameraPack->labelfont(1);
-	//cameraPack->type(Fl_Pack::VERTICAL);
-	//cameraPack->spacing(0);
-	//cameraPack->begin();
+	// Fl_Pack* cameraPack = new Fl_Pack(w() - 100, 30, 100, h(), "Scene");
+	// cameraPack->box(FL_DOWN_FRAME);
+	// cameraPack->labelfont(1);
+	// cameraPack->type(Fl_Pack::VERTICAL);
+	// cameraPack->spacing(0);
+	// cameraPack->begin();
 
-	//	//slider for controlling rotation
-	//	Fl_Box *rotXTextbox = new Fl_Box(0, 0, pack->w() - 20, 20, "RotateX");
-	//	rotXSlider = new Fl_Value_Slider(0, 0, pack->w() - 20, 20, "");
-	//	rotXSlider->align(FL_ALIGN_TOP);
-	//	rotXSlider->type(FL_HOR_SLIDER);
-	//	rotXSlider->bounds(-359, 359);
-	//	rotXSlider->step(1);
-	//	rotXSlider->value(canvas->rotVec.x);
-	//	rotXSlider->callback(sliderFloatCB, (void*)(&(canvas->rotVec.x)));
+	// 	//slider for controlling rotation
+	// 	Fl_Box *rotXTextbox = new Fl_Box(0, 0, pack->w() - 20, 20, "RotateX");
+	// 	rotXSlider = new Fl_Value_Slider(0, 0, pack->w() - 20, 20, "");
+	// 	rotXSlider->align(FL_ALIGN_TOP);
+	// 	rotXSlider->type(FL_HOR_SLIDER);
+	// 	rotXSlider->bounds(-359, 359);
+	// 	rotXSlider->step(1);
+	// 	rotXSlider->value(canvas->rotVec.x);
+	// 	rotXSlider->callback(sliderFloatCB, (void*)(&(canvas->rotVec.x)));
 
-	//	Fl_Box *rotYTextbox = new Fl_Box(0, 0, pack->w() - 20, 20, "RotateY");
-	//	rotYSlider = new Fl_Value_Slider(0, 0, pack->w() - 20, 20, "");
-	//	rotYSlider->align(FL_ALIGN_TOP);
-	//	rotYSlider->type(FL_HOR_SLIDER);
-	//	rotYSlider->bounds(-359, 359);
-	//	rotYSlider->step(1);
-	//	rotYSlider->value(canvas->rotVec.y);
-	//	rotYSlider->callback(sliderFloatCB, (void*)(&(canvas->rotVec.y)));
+	// 	Fl_Box *rotYTextbox = new Fl_Box(0, 0, pack->w() - 20, 20, "RotateY");
+	// 	rotYSlider = new Fl_Value_Slider(0, 0, pack->w() - 20, 20, "");
+	// 	rotYSlider->align(FL_ALIGN_TOP);
+	// 	rotYSlider->type(FL_HOR_SLIDER);
+	// 	rotYSlider->bounds(-359, 359);
+	// 	rotYSlider->step(1);
+	// 	rotYSlider->value(canvas->rotVec.y);
+	// 	rotYSlider->callback(sliderFloatCB, (void*)(&(canvas->rotVec.y)));
 
-	//	Fl_Box *rotZTextbox = new Fl_Box(0, 0, pack->w() - 20, 20, "RotateZ");
-	//	rotZSlider = new Fl_Value_Slider(0, 0, pack->w() - 20, 20, "");
-	//	rotZSlider->align(FL_ALIGN_TOP);
-	//	rotZSlider->type(FL_HOR_SLIDER);
-	//	rotZSlider->bounds(-359, 359);
-	//	rotZSlider->step(1);
-	//	rotZSlider->value(canvas->rotVec.z);
-	//	rotZSlider->callback(sliderFloatCB, (void*)(&(canvas->rotVec.z)));
+	// 	Fl_Box *rotZTextbox = new Fl_Box(0, 0, pack->w() - 20, 20, "RotateZ");
+	// 	rotZSlider = new Fl_Value_Slider(0, 0, pack->w() - 20, 20, "");
+	// 	rotZSlider->align(FL_ALIGN_TOP);
+	// 	rotZSlider->type(FL_HOR_SLIDER);
+	// 	rotZSlider->bounds(-359, 359);
+	// 	rotZSlider->step(1);
+	// 	rotZSlider->value(canvas->rotVec.z);
+	// 	rotZSlider->callback(sliderFloatCB, (void*)(&(canvas->rotVec.z)));
 
-	//	Fl_Box *scaleTextbox = new Fl_Box(0, 0, pack->w() - 20, 20, "Scale");
-	//	scaleSlider = new Fl_Value_Slider(0, 0, pack->w() - 20, 20, "");
-	//	scaleSlider->align(FL_ALIGN_TOP);
-	//	scaleSlider->type(FL_HOR_SLIDER);
-	//	scaleSlider->bounds(0.1, 2);
-	//	scaleSlider->value(canvas->scale);
-	//	scaleSlider->callback(sliderFloatCB, (void*)(&(canvas->scale)));
+	// 	Fl_Box *scaleTextbox = new Fl_Box(0, 0, pack->w() - 20, 20, "Scale");
+	// 	scaleSlider = new Fl_Value_Slider(0, 0, pack->w() - 20, 20, "");
+	// 	scaleSlider->align(FL_ALIGN_TOP);
+	// 	scaleSlider->type(FL_HOR_SLIDER);
+	// 	scaleSlider->bounds(0.1, 2);
+	// 	scaleSlider->value(canvas->scale);
+	// 	scaleSlider->callback(sliderFloatCB, (void*)(&(canvas->scale)));
 
-	//	cameraPack->end();
+	// 	cameraPack->end();
 
 	pack->end();
 

@@ -7,14 +7,13 @@ MyGLCanvas::MyGLCanvas(int x, int y, int w, int h, const char *l) : Fl_Gl_Window
 	mode(FL_RGB | FL_ALPHA | FL_DEPTH | FL_DOUBLE);
 	
 	rotVec = glm::vec3(0.0f, 0.0f, 0.0f);
-	eyePosition = glm::vec3(0.0f, 0.0f, 3.0f);
+	eyePosition = glm::vec3(2.0f, 2.0f, 2.0f);
 
 	wireframe = 0;
 	fill = 1;
 	normal = 0;
 	smooth = 0;
 	segmentsX = segmentsY = 10;
-	scale = 1.0f;
 
 	objType = SHAPE_CUBE;
 	cube = new Cube();
@@ -22,10 +21,12 @@ MyGLCanvas::MyGLCanvas(int x, int y, int w, int h, const char *l) : Fl_Gl_Window
 	cone = new Cone();
 	sphere = new Sphere();
 	sword = new Sword();
-	//torus = new Torus();
 	shape = cube;
 
 	shape->setSegments(segmentsX, segmentsY);
+
+	camera = new Camera();
+	camera->orientLookAt(eyePosition, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 }
 
 MyGLCanvas::~MyGLCanvas() {
@@ -34,7 +35,9 @@ MyGLCanvas::~MyGLCanvas() {
 	delete cone;
 	delete sphere;
 	delete sword;
-	//delete torus;
+	if (camera != NULL) {
+		delete camera;
+	}
 }
 
 void MyGLCanvas::setShape(OBJ_TYPE type) {
@@ -64,8 +67,6 @@ void MyGLCanvas::setShape(OBJ_TYPE type) {
 
 void MyGLCanvas::setSegments() {
 	shape->setSegments(segmentsX, segmentsY);
-
-	shape->setupShape();
 }
 
 void MyGLCanvas::draw() {
@@ -98,9 +99,20 @@ void MyGLCanvas::draw() {
 		glEnable(GL_DEPTH_TEST);
 		glPolygonOffset(1, 1);
 		glFrontFace(GL_CCW); //make sure that the ordering is counter-clock wise
+		glEnable(GL_RESCALE_NORMAL);
 	}
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glm::mat4 projectionMat4 = camera->getProjectionMatrix();
+	glMultMatrixf(glm::value_ptr(projectionMat4));
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glm::mat4 modelViewMat4 = camera->getModelViewMatrix();
+	glMultMatrixf(glm::value_ptr(modelViewMat4));
 
 	if (smooth) {
 		glShadeModel(GL_SMOOTH);
@@ -108,16 +120,6 @@ void MyGLCanvas::draw() {
 	else {
 		glShadeModel(GL_FLAT);
 	}
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	//rotate object
-	glRotatef(rotVec.x, 1.0, 0.0, 0.0);
-	glRotatef(rotVec.y, 0.0, 1.0, 0.0);
-	glRotatef(rotVec.z, 0.0, 0.0, 1.0);
-
-	glScalef(scale, scale, scale);
 
 	drawAxis();
 	drawScene();
@@ -148,6 +150,7 @@ void MyGLCanvas::drawScene() {
 		glPolygonMode(GL_FRONT, GL_FILL);
 		shape->draw();
 	}
+
 	glPopMatrix();
 }
 
@@ -185,11 +188,6 @@ void MyGLCanvas::drawAxis() {
 void MyGLCanvas::updateCamera(int width, int height) {
 	float xy_aspect;
 	xy_aspect = (float)width / (float)height;
-	// Determine if we are modifying the camera(GL_PROJECITON) matrix(which is our viewing volume)
-		// Otherwise we could modify the object transormations in our world with GL_MODELVIEW
-	glMatrixMode(GL_PROJECTION);
-	// Reset the Projection matrix to an identity matrix
-	glLoadIdentity();
-	gluPerspective(45.0f, xy_aspect, 0.1f, 10.0f);
-	gluLookAt(eyePosition.x, eyePosition.y, eyePosition.z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+
+	camera->setScreenSize(width, height);
 }
