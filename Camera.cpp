@@ -88,6 +88,8 @@ void Camera::orientLookVec(glm::vec3 eyePoint, glm::vec3 lookVec, glm::vec3 upVe
 	glm::vec3 rightVector = glm::cross(lookVector, upVec);    //U
 	glm::vec3 tempUpVec = glm::cross(rightVector, lookVector); //V
 
+	modelViewMat4 = glm::mat4(1.0);
+
 	//Normalize?
 	lookVector = glm::normalize(lookVector);
 	tempUpVec = glm::normalize(tempUpVec);
@@ -127,7 +129,7 @@ void Camera::orientLookVec(glm::vec3 eyePoint, glm::vec3 lookVec, glm::vec3 upVe
 	//Translation: eyePosition is the old eyePoint
 	glm::vec3 translateVector;
 	for (int i = 0; i < 3; i++) {
-		translateVector[i] = -1 * (eyePoint[i] - eyePosition[i]);
+		translateVector[i] = -1 * eyePoint[i];
 	}
 	translate(translateVector);
 	eyePosition = eyePoint;
@@ -159,7 +161,6 @@ glm::mat4 Camera::getUnhingeMatrix() {
 
 
 glm::mat4 Camera::getProjectionMatrix() {
-	glm::mat4 projMat4(1.0);
 	return projMat4;
 }
 
