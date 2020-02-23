@@ -1,6 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/constants.hpp>
@@ -13,12 +14,21 @@ const float EPSILON = 1e-20;
 #define FAR_PLANE 20.0f
 #define VIEW_ANGLE 60.0f
 #define PI glm::pi<float>()
-
+using namespace std;
 
 class Camera {
 public:
 	float rotU, rotV, rotW;  //values used by the callback in main.cpp
 
+	glm::vec3 lookVector;
+	glm::vec3 eyePosition;
+	glm::vec3 upVector;
+	glm::mat4 modelViewMat4;
+	glm::mat4 invModelViewMat4;
+	glm::mat4 projMat4;
+	glm::mat4 unhingeMat4;
+	glm::mat4 invScaleMat4;
+	glm::mat4 scaleMat4;
 	Camera();
 	~Camera();
 

@@ -1,6 +1,7 @@
 #include "Camera.h"
 
 Camera::Camera() {
+	modelViewMat4 = glm::mat4(1.0);
 	reset();
 }
 
@@ -33,24 +34,33 @@ void Camera::setRotUVW(float u, float v, float w) {
 
 
 void Camera::orientLookAt(glm::vec3 eyePoint, glm::vec3 lookatPoint, glm::vec3 upVec) {
+	eyePosition = eyePoint;
+	lookVector[0] = eyePosition[0] - lookatPoint[0];
+	lookVector[1] = eyePosition[1] - lookatPoint[1];
+	lookVector[2] = eyePosition[2] - lookatPoint[2];
+	
+	glm::vec3 rightVector = glm::cross(upVec, lookVector);
+	glm::vec3 upVector = glm::cross(lookVector, rightVector);
+
 }
 
 
 void Camera::orientLookVec(glm::vec3 eyePoint, glm::vec3 lookVec, glm::vec3 upVec) {
+	glm::vec3 translateVector = eyePoint;
+	eyePosition = eyePoint;
+	lookVector = lookVec;
+	translate(translateVector);
 }
 
 glm::mat4 Camera::getScaleMatrix() {
-	glm::mat4 scaleMat4(1.0);
 	return scaleMat4;
 }
 
 glm::mat4 Camera::getInverseScaleMatrix() {
-	glm::mat4 invScaleMat4;
 	return invScaleMat4;
 }
 
 glm::mat4 Camera::getUnhingeMatrix() {
-	glm::mat4 unhingeMat4(1.0);
 	return unhingeMat4;
 }
 
@@ -60,29 +70,41 @@ glm::mat4 Camera::getProjectionMatrix() {
 	return projMat4;
 }
 
+glm::mat4 Camera::getModelViewMatrix() {
+	glm::mat4 tempModelViewMat4 = modelViewMat4;
+	cout << "--------------------------" << endl;
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			cout << modelViewMat4[j][i] << ", ";
+		}
+		cout << endl;
+	}
+	cout << "--------------------------" << endl;
+	modelViewMat4 = glm::mat4(1.0);
+	return tempModelViewMat4;
+}
+
 glm::mat4 Camera::getInverseModelViewMatrix() {
-	glm::mat4 invModelViewMat4(1.0);
 	return invModelViewMat4;
 }
 
 
 void Camera::setViewAngle (float _viewAngle) {
+	viewAngle = _viewAngle;
 }
 
 void Camera::setNearPlane (float _nearPlane) {
+	nearPlane = _nearPlane;
 }
 
 void Camera::setFarPlane (float _farPlane) {
+	farPlane = _farPlane;
 }
 
 void Camera::setScreenSize (int _screenWidth, int _screenHeight) {
+	screenWidth = _screenWidth;
+	screenHeight = _screenHeight;
 }
-
-glm::mat4 Camera::getModelViewMatrix() {
-	glm::mat4 modelViewMat4(1.0);
-	return modelViewMat4;
-}
-
 
 void Camera::rotateV(float degrees) {
 }
@@ -94,6 +116,10 @@ void Camera::rotateW(float degrees) {
 }
 
 void Camera::translate(glm::vec3 v) {
+	cout << "V: " << v[0] << " " << v[1] << " " << v[2] << endl;
+	modelViewMat4[3][0] = v[0];
+	modelViewMat4[3][1] = v[1];
+	modelViewMat4[3][2] = v[2];
 }
 
 void Camera::rotate(glm::vec3 point, glm::vec3 axis, float degrees) {
@@ -101,18 +127,15 @@ void Camera::rotate(glm::vec3 point, glm::vec3 axis, float degrees) {
 
 
 glm::vec3 Camera::getEyePoint() {
-	glm::vec3 eyeVec3;
-	return eyeVec3;
+	return eyePosition;
 }
 
 glm::vec3 Camera::getLookVector() {
-	glm::vec3 lookVec3;
-	return lookVec3;
+	return lookVector;
 }
 
 glm::vec3 Camera::getUpVector() {
-	glm::vec3 upVec3;
-	return upVec3;
+	return upVector;
 }
 
 float Camera::getViewAngle() {

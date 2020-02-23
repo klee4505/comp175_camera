@@ -120,7 +120,7 @@ void MyGLCanvas::draw() {
 	else {
 		glShadeModel(GL_FLAT);
 	}
-
+	
 	drawAxis();
 	drawScene();
 }
