@@ -441,6 +441,27 @@ MyAppWindow::MyAppWindow(int W, int H, const char*L) : Fl_Window(W, H, L) {
 
 /**************************************** main() ********************/
 int main(int argc, char **argv) {
+	/*Testing:*/
+	glm::mat4 M1 = glm::rotate(glm::mat4(1.0), glm::radians(PI/4), glm::vec3(0.0f, 1.0f, 0.0f));
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			cout << M1[j][i] << ", ";
+		}
+		cout << endl;
+	}
+	cout << "--------------------------" << endl;
+
+	M1 = glm::rotate(M1, glm::radians(0.615479709f), glm::vec3(0.0f, 0.0f, 1.0f));
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			cout << M1[j][i] << ", ";
+		}
+		cout << endl;
+	}
+	cout << "--------------------------" << endl;
+
+
+
 	win = new MyAppWindow(850, 650, "Camera");
 	win->resizable(win);
 	Fl::add_idle(MyAppWindow::idleCB);
