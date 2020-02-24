@@ -34,117 +34,90 @@ void Camera::setRotUVW(float u, float v, float w) {
 
 
 void Camera::orientLookAt(glm::vec3 eyePoint, glm::vec3 lookatPoint, glm::vec3 upVec) {
-
-	//Translation: Initial setting
-	modelViewMat4[3][0] = -eyePoint[0];
-	modelViewMat4[3][1] = -eyePoint[1];
-	modelViewMat4[3][2] = -eyePoint[2];
+	cout << "Called orientLookAt" << endl;
+	modelViewMat4 = glm::mat4(1.0);
+	rotationMat4 = glm::mat4(1.0);
+	translationMat4 = glm::mat4(1.0);
 	eyePosition = eyePoint;
+	upVector = upVec; //But Why
 
-	//Setting lookVector and upVector
-	lookVector[0] = eyePosition[0] - lookatPoint[0];
-	lookVector[1] = eyePosition[1] - lookatPoint[1];
-	lookVector[2] = eyePosition[2] - lookatPoint[2];
-	//Only orientLookAt should initialize upVector
-	upVector = upVec;
-	
-	
-	
-	
-	
-	cout << "Look Vector: {";
 	for (int i = 0; i < 3; i++) {
-		cout << lookVector[i] << " ";
+		lookVector[i] = lookatPoint[i] - eyePosition[i]; //Final - Initial
 	}
-	cout << "}" << endl;
-	
-	glm::vec3 rightVector = glm::cross(lookVector, upVec);
-	//The true upVector should only be set when rotV is called; otherwise stay at (0, 1, 0)
-	glm::vec3 tempUpVec = glm::cross(rightVector, lookVector);
-
-	cout << "Right Vector: {";
-	for (int i = 0; i < 3; i++) {
-		cout << rightVector[i] << " ";
-	}
-	cout << "}" << endl;
-
-	cout << "Up Vector: {";
-	for (int i = 0; i < 3; i++) {
-		cout << upVector[i] << " ";
-	}
-	cout << "}" << endl;
-
-	//Normalize?
+	/*for (int i = 0; i < 3; i++) {
+		lookVector[i] = -1 * lookVector[i];
+	}*/
 	lookVector = glm::normalize(lookVector);
+
+//	glm::vec3 rightVector = glm::cross(upVector, lookVector);
+	glm::vec3 rightVector = glm::cross(lookVector, upVector);
+	rightVector = glm::normalize(rightVector);
+
+//	upVector = glm::cross(lookVector, rightVector);
+	upVector = glm::cross(rightVector, lookVector);
 	upVector = glm::normalize(upVector);
+
+	//@TODO: Go by Columns or by Rows?
+	//for (int row = 0; row < 3; row++) {
+	//	rotationMat4[0][row] = rightVector[row];
+	//	rotationMat4[1][row] = upVector[row];
+	//	rotationMat4[2][row] = lookVector[row];
+	//}
+	for (int col = 0; col < 3; col++) {
+		rotationMat4[col][0] = rightVector[col];
+		rotationMat4[col][1] = upVector[col];
+		rotationMat4[col][2] = lookVector[col];
+	}
+
+
+
+	for (int row = 0; row < 3; row++) {
+		translationMat4[3][row] = -1 * eyePosition[row];
+	}
+
+	modelViewMat4 = rotationMat4 * translationMat4;
 }
 
 
 void Camera::orientLookVec(glm::vec3 eyePoint, glm::vec3 lookVec, glm::vec3 upVec) {
-
-	//Rotation?
-	//Cross lookVec by upVec to get rightVec
-	lookVector = lookVec;
-	glm::vec3 rightVector = glm::cross(lookVector, upVec);    //U
-	glm::vec3 tempUpVec = glm::cross(rightVector, lookVector); //V
-
 	modelViewMat4 = glm::mat4(1.0);
+	rotationMat4 = glm::mat4(1.0);
+	translationMat4 = glm::mat4(1.0);
 
-	//Normalize?
+	eyePosition = eyePoint;
+	upVector = upVec; //But Why
+
+	lookVector = lookVec;
+	for (int i = 0; i < 3; i++) {
+		lookVector[i] = -1 * lookVector[i];
+	}
 	lookVector = glm::normalize(lookVector);
-	tempUpVec = glm::normalize(tempUpVec);
+
+	glm::vec3 rightVector = glm::cross(upVector, lookVector);
+//	glm::vec3 rightVector = glm::cross(lookVector, upVector);
 	rightVector = glm::normalize(rightVector);
-//	upVector = glm::normalize(upVector);
 
-	cout << "Look Vector: {";
-	for (int i = 0; i < 3; i++) {
-		cout << lookVector[i] << " ";
-	}
-	cout << "}" << endl;
+	upVector = glm::cross(lookVector, rightVector);
+//	upVector = glm::cross(rightVector, lookVector);
+	upVector = glm::normalize(upVector);
 
-	cout << "Old Up Vector: {";
-	for (int i = 0; i < 3; i++) {
-		cout << upVec[i] << " ";
+	//@TODO: Go by Columns or by Rows?
+	//for (int row = 0; row < 3; row++) {
+	//	rotationMat4[0][row] = rightVector[row];
+	//	rotationMat4[1][row] = upVector[row];
+	//	rotationMat4[2][row] = lookVector[row];
+	//}
+	for (int col = 0; col < 3; col++) {
+		rotationMat4[col][0] = rightVector[col];
+		rotationMat4[col][1] = upVector[col];
+		rotationMat4[col][2] = lookVector[col];
 	}
-	cout << "}" << endl;
-	
-	cout << "Right Vector: {";
-	for (int i = 0; i < 3; i++) {
-		cout << rightVector[i] << " "; 
-	}
-	cout << "}" << endl;
-
-	cout << "Up Vector: {";
-	for (int i = 0; i < 3; i++) {
-		cout << upVector[i] << " ";
-	}
-	cout << "}" << endl;
 
 	for (int row = 0; row < 3; row++) {
-		modelViewMat4[0][row] = rightVector[row];
-		modelViewMat4[1][row] = tempUpVec[row];
-		modelViewMat4[2][row] = lookVector[row];
+		translationMat4[3][row] = -1 * eyePosition[row];
 	}
-	
-	//Translation: eyePosition is the old eyePoint
-	glm::vec3 translateVector;
-	for (int i = 0; i < 3; i++) {
-		translateVector[i] = -1 * eyePoint[i];
-	}
-	translate(translateVector);
-	eyePosition = eyePoint;
 
-
-
-
-	cout << "--------------------------" << endl;
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			cout << modelViewMat4[j][i] << ", ";
-		}
-		cout << endl;
-	}
-	cout << "--------------------------" << endl;
+	modelViewMat4 = rotationMat4 * translationMat4;
 }
 
 glm::mat4 Camera::getScaleMatrix() {
@@ -161,13 +134,12 @@ glm::mat4 Camera::getUnhingeMatrix() {
 
 
 glm::mat4 Camera::getProjectionMatrix() {
+//	projMat4 = glm::mat4(1.0);
 	return projMat4;
 }
 
 glm::mat4 Camera::getModelViewMatrix() {
-	glm::mat4 tempModelViewMat4 = modelViewMat4;
-	//modelViewMat4 = glm::mat4(1.0);
-	return tempModelViewMat4;
+	return modelViewMat4;
 }
 
 glm::mat4 Camera::getInverseModelViewMatrix() {
@@ -177,19 +149,28 @@ glm::mat4 Camera::getInverseModelViewMatrix() {
 
 void Camera::setViewAngle (float _viewAngle) {
 	viewAngle = _viewAngle;
+
+	updateScalingMat();
 }
 
 void Camera::setNearPlane (float _nearPlane) {
 	nearPlane = _nearPlane;
+
+	updateUnhingeMat();
 }
 
 void Camera::setFarPlane (float _farPlane) {
 	farPlane = _farPlane;
+
+	updateScalingMat();
+	updateUnhingeMat();
 }
 
 void Camera::setScreenSize (int _screenWidth, int _screenHeight) {
 	screenWidth = _screenWidth;
 	screenHeight = _screenHeight;
+
+	updateScalingMat();
 }
 
 void Camera::rotateV(float degrees) {
@@ -202,18 +183,7 @@ void Camera::rotateW(float degrees) {
 }
 
 void Camera::translate(glm::vec3 v) {
-	cout << "V: " << v[0] << " " << v[1] << " " << v[2] << endl;
-	//There's no way we multiply by translate_mat each time... right? 
-	//Order of operations: rotate to lookVec, then scale by directly changing -px, -py, -pz?
-	glm::mat4 translate_mat(1.0);
-	translate_mat[3][0] = v[0];
-	translate_mat[3][1] = v[1];
-	translate_mat[3][2] = v[2];
-	modelViewMat4 *= translate_mat;
-	
-	/*modelViewMat4[3][0] = v[0];
-	modelViewMat4[3][1] = v[1];
-	modelViewMat4[3][2] = v[2];*/
+
 }
 
 void Camera::rotate(glm::vec3 point, glm::vec3 axis, float degrees) {
@@ -255,4 +225,30 @@ int Camera::getScreenHeight() {
 
 float Camera::getScreenWidthRatio() {
 	return screenWidthRatio;
+}
+
+void Camera::updateScalingMat() {
+	//cout << "Updating" << endl;
+	screenWidthRatio = (float)screenWidth / (float)screenHeight;
+	heightAngle = glm::radians(viewAngle);
+	widthAngle = heightAngle * screenWidthRatio;
+	scaleMat4 = glm::mat4(1.0);
+
+	scaleMat4[0][0] = 1.0 / (glm::tan(widthAngle / 2.0) * farPlane);
+	scaleMat4[1][1] = 1.0 / (glm::tan(heightAngle / 2.0) * farPlane);
+	scaleMat4[2][2] = 1.0 / farPlane;
+
+	projMat4 = unhingeMat4 * scaleMat4;
+}
+
+void Camera::updateUnhingeMat() {
+	float c = -1.0 * nearPlane / farPlane;
+	unhingeMat4 = glm::mat4(1.0);
+
+	unhingeMat4[2][2] = -1.0 / (c + 1.0);
+	unhingeMat4[2][3] = -1.0;
+	unhingeMat4[3][2] = c / (c + 1.0);
+	unhingeMat4[3][3] = 0;
+
+	projMat4 = unhingeMat4 * scaleMat4;
 }

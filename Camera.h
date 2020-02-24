@@ -24,6 +24,8 @@ public:
 	glm::vec3 eyePosition;
 	glm::vec3 upVector;
 	glm::mat4 modelViewMat4;
+	glm::mat4 rotationMat4;
+	glm::mat4 translationMat4;
 	glm::mat4 invModelViewMat4;
 	glm::mat4 projMat4;
 	glm::mat4 unhingeMat4;
@@ -40,6 +42,9 @@ public:
 	void setFarPlane(float _farPlane);
 	void setScreenSize(int _screenWidth, int _screenHeight);
 	void setRotUVW(float u, float v, float w);  //called by main.cpp as a part of the slider callback
+
+	void updateScalingMat(); //@TODO
+	void updateUnhingeMat();
 
 	glm::mat4 getUnhingeMatrix();
 	glm::mat4 getProjectionMatrix();
@@ -72,6 +77,7 @@ private:
 	float nearPlane, farPlane;
 	int screenWidth, screenHeight;
 	float screenWidthRatio;
+	float heightAngle, widthAngle;
 };
 #endif
 
