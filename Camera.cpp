@@ -27,10 +27,24 @@ void Camera::setRotUVW(float u, float v, float w) {
 	float diffU = u - rotU;
 	float diffV = v - rotV;
 	float diffW = w - rotW;
-	rotateU(diffU);
-	rotateV(diffV);
-	rotateW(diffW);
-	modelViewMat4 = rotWMat4 * rotUMat4 * rotVMat4 * rotationMat4 * translationMat4;
+	rotateU(u);
+	rotateV(v);
+	rotateW(w);
+
+	glm::mat4 newrotMat4 = rotationMat4;
+	newrotMat4 *= rotUMat4;
+	newrotMat4 *= rotVMat4;
+	newrotMat4 *= rotWMat4;
+	glm::mat4 rotTrans = glm::transpose(newrotMat4);
+	glm::vec3 wVec3 = rotTrans[2];
+
+	for (int i = 0; i < 3; i++) {
+		lookVector[i] = -wVec3[i];
+	}
+
+	upVector = rotTrans[1];
+	modelViewMat4 = rotUMat4 * rotWMat4 * rotVMat4 * rotationMat4 * translationMat4;
+
 	rotU = u;
 	rotV = v;
 	rotW = w;
@@ -47,6 +61,7 @@ void Camera::orientLookAt(glm::vec3 eyePoint, glm::vec3 lookatPoint, glm::vec3 u
 
 	for (int i = 0; i < 3; i++) {
 		lookVector[i] = lookatPoint[i] - eyePosition[i]; //Final - Initial
+		cout << "LOOK: " << lookVector[i] << endl;
 	}
 	/*for (int i = 0; i < 3; i++) {
 		lookVector[i] = -1 * lookVector[i];
@@ -70,7 +85,7 @@ void Camera::orientLookAt(glm::vec3 eyePoint, glm::vec3 lookatPoint, glm::vec3 u
 	for (int col = 0; col < 3; col++) {
 		rotationMat4[col][0] = rightVector[col];
 		rotationMat4[col][1] = upVector[col];
-		rotationMat4[col][2] = lookVector[col];
+		rotationMat4[col][2] = -lookVector[col];
 	}
 
 
@@ -79,7 +94,19 @@ void Camera::orientLookAt(glm::vec3 eyePoint, glm::vec3 lookatPoint, glm::vec3 u
 		translationMat4[3][row] = -1 * eyePosition[row];
 	}
 
-	modelViewMat4 = rotWMat4 * rotUMat4 * rotVMat4 * rotationMat4 * translationMat4;
+	glm::mat4 newrotMat4 = rotationMat4;
+	newrotMat4 *= rotUMat4;
+	newrotMat4 *= rotVMat4;
+	newrotMat4 *= rotWMat4;
+	glm::mat4 rotTrans = glm::transpose(newrotMat4);
+	glm::vec3 wVec3 = rotTrans[2];
+
+	for (int i = 0; i < 3; i++) {
+		lookVector[i] = -wVec3[i];
+	}
+
+	upVector = rotTrans[1];
+	modelViewMat4 = rotUMat4 * rotWMat4 * rotVMat4 * rotationMat4 * translationMat4;
 }
 
 
@@ -93,16 +120,17 @@ void Camera::orientLookVec(glm::vec3 eyePoint, glm::vec3 lookVec, glm::vec3 upVe
 
 	lookVector = lookVec;
 	for (int i = 0; i < 3; i++) {
-		lookVector[i] = -1 * lookVector[i];
+		lookVector[i] = lookVector[i];
+		cout << "LOOK -1: " << lookVector[i] << endl;
 	}
 	lookVector = glm::normalize(lookVector);
 
-	glm::vec3 rightVector = glm::cross(upVector, lookVector);
-//	glm::vec3 rightVector = glm::cross(lookVector, upVector);
+	// glm::vec3 rightVector = glm::cross(upVector, lookVector);
+	glm::vec3 rightVector = glm::cross(lookVector, upVector);
 	rightVector = glm::normalize(rightVector);
 
-	upVector = glm::cross(lookVector, rightVector);
-//	upVector = glm::cross(rightVector, lookVector);
+	// upVector = glm::cross(lookVector, rightVector);
+	upVector = glm::cross(rightVector, lookVector);
 	upVector = glm::normalize(upVector);
 
 	//@TODO: Go by Columns or by Rows?
@@ -114,14 +142,40 @@ void Camera::orientLookVec(glm::vec3 eyePoint, glm::vec3 lookVec, glm::vec3 upVe
 	for (int col = 0; col < 3; col++) {
 		rotationMat4[col][0] = rightVector[col];
 		rotationMat4[col][1] = upVector[col];
-		rotationMat4[col][2] = lookVector[col];
+		rotationMat4[col][2] = -lookVector[col];
 	}
 
 	for (int row = 0; row < 3; row++) {
 		translationMat4[3][row] = -1 * eyePosition[row];
 	}
 
-	modelViewMat4 = rotWMat4 * rotUMat4 * rotVMat4 * rotationMat4 * translationMat4;
+	// rotationMat4 *= rotWMat4; 
+	// rotationMat4 *= rotVMat4;
+	// rotationMat4 *= rotUMat4;
+
+	// glm::mat4 rotTrans = glm::transpose(rotationMat4);
+	// lookVector = rotTrans[2];
+	// upVector = rotTrans[1];
+
+	glm::mat4 newrotMat4 = rotationMat4;
+	newrotMat4 *= rotUMat4;
+	newrotMat4 *= rotVMat4;
+	newrotMat4 *= rotWMat4;
+	glm::mat4 rotTrans = glm::transpose(newrotMat4);
+	glm::vec3 wVec3 = rotTrans[2];
+
+	for (int i = 0; i < 3; i++) {
+		lookVector[i] = -wVec3[i];
+	}
+	
+	upVector = rotTrans[1];
+	modelViewMat4 = rotUMat4 * rotWMat4 * rotVMat4 * rotationMat4 * translationMat4;
+
+	cout << rotUMat4[1][1] << endl;
+	cout << rotWMat4[1][1] << endl;
+	cout << rotVMat4[2][2] << endl;
+
+
 }
 
 glm::mat4 Camera::getScaleMatrix() {
@@ -180,23 +234,28 @@ void Camera::setScreenSize (int _screenWidth, int _screenHeight) {
 void Camera::rotateV(float degrees) {
 	float radians = glm::radians(degrees);
 	glm::mat4 temp = glm::mat4(1.0);
-	temp[0][0] = glm::cos(radians);
-	temp[0][2] = glm::sin(radians);
-	temp[2][0] = -glm::sin(radians);
 	temp[2][2] = glm::cos(radians);
-
-	rotVMat4 *= temp;
+	temp[2][0] = -glm::sin(radians);
+	temp[0][2] = glm::sin(radians);
+	temp[0][0] = glm::cos(radians);
+	rotVMat4 = temp;
+	// rotationMat4 *= rotVMat4;
+	// glm::mat4 rotTrans = glm::transpose(rotationMat4);
+	// lookVector = rotTrans[2];
+	// upVector = rotTrans[1];
 }
 
 void Camera::rotateU(float degrees) {
-	float radians = glm::radians(degrees);
-	glm::mat4 temp = glm::mat4(1.0);
-	temp[1][1] = glm::cos(radians);
-	temp[1][2] = glm::sin(radians);
-	temp[2][1] = -glm::sin(radians);
-	temp[2][2] = glm::cos(radians);
+	// float radians = glm::radians(degrees);
+	// glm::mat4 temp = glm::mat4(1.0);
+	// temp[1][1] = glm::cos(radians);
+	// temp[1][2] = -glm::sin(radians);
+	// temp[2][1] = glm::sin(radians);
+	// temp[2][2] = glm::cos(radians);
 
-	rotUMat4 *= temp;
+	// rotUMat4 = temp;
+
+	rotate(lookVector, glm::transpose(rotationMat4)[0], degrees);
 }
 
 void Camera::rotateW(float degrees) {
@@ -207,7 +266,12 @@ void Camera::rotateW(float degrees) {
 	temp[1][0] = -glm::sin(radians);
 	temp[1][1] = glm::cos(radians);
 
-	rotWMat4 *= temp;
+	rotWMat4 = temp;
+	// rotationMat4 *= rotWMat4;
+
+	// glm::mat4 rotTrans = glm::transpose(rotationMat4);
+	// lookVector = rotTrans[2];
+	// upVector = rotTrans[1];
 }
 
 void Camera::translate(glm::vec3 v) {
@@ -215,6 +279,32 @@ void Camera::translate(glm::vec3 v) {
 }
 
 void Camera::rotate(glm::vec3 point, glm::vec3 axis, float degrees) {
+	float m1theta = -glm::atan(axis[0] / axis[2]);
+	float a = point[0];
+    float b = point[1];
+    float c = point[2];
+    float d = glm::sqrt(glm::pow(b, 2) + glm::pow(c, 2));
+    float m2theta = glm::asin(axis[0] / d) + PI / 2.0;
+    float m3theta = glm::radians(degrees);
+
+    glm::vec4 m1col0 = glm::vec4(glm::cos(m1theta), 0.0, -glm::sin(m1theta), 0.0);
+    glm::vec4 m1col1 = glm::vec4(0.0, 1.0, 0.0, 0.0);
+    glm::vec4 m1col2 = glm::vec4(glm::sin(m1theta), 0.0, glm::cos(m1theta), 0.0);
+    glm::vec4 m1col3 = glm::vec4(0.0, 0.0, 0.0, 1.0);
+    glm::vec4 m2col0 = glm::vec4(glm::cos(m2theta), glm::sin(m2theta), 0.0, 0.0);
+    glm::vec4 m2col1 = glm::vec4(-glm::sin(m2theta), glm::cos(m2theta), 0.0, 0.0);
+    glm::vec4 m2col2 = glm::vec4(0.0, 0.0, 1.0, 0.0);
+    glm::vec4 m2col3 = glm::vec4(0.0, 0.0, 0.0, 1.0);
+    glm::vec4 m3col0 = glm::vec4(1.0, 0.0, 0.0, 0.0);
+    glm::vec4 m3col1 = glm::vec4(0.0, glm::cos(m3theta), glm::sin(m3theta), 0.0);
+    glm::vec4 m3col2 = glm::vec4(0.0, -glm::sin(m3theta), glm::cos(m3theta), 0.0);
+    glm::vec4 m3col3 = glm::vec4(0.0, 0.0, 0.0, 1.0);
+
+    glm::mat4 m1 = glm::mat4(m1col0, m1col1, m1col2, m1col3);
+    glm::mat4 m2 = glm::mat4(m2col0, m2col1, m2col2, m2col3);
+    glm::mat4 m3 = glm::mat4(m3col0, m3col1, m3col2, m3col3);
+
+    lookVector = m1 * m2 * m3 * glm::vec4(point, 1.0);
 }
 
 
