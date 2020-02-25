@@ -16,6 +16,9 @@ void Camera::reset() {
 	screenWidth = screenHeight = 200;
 	screenWidthRatio = 1.0f;
 	rotU = rotV = rotW = 0;
+	rotWMat4 = glm::mat4(1.0);
+	rotVMat4 = glm::mat4(1.0);
+	rotUMat4 = glm::mat4(1.0);
 }
 
 //called by main.cpp as a part of the slider callback for controlling rotation
@@ -27,6 +30,7 @@ void Camera::setRotUVW(float u, float v, float w) {
 	rotateU(diffU);
 	rotateV(diffV);
 	rotateW(diffW);
+	modelViewMat4 = rotWMat4 * rotUMat4 * rotVMat4 * rotationMat4 * translationMat4;
 	rotU = u;
 	rotV = v;
 	rotW = w;
@@ -75,7 +79,7 @@ void Camera::orientLookAt(glm::vec3 eyePoint, glm::vec3 lookatPoint, glm::vec3 u
 		translationMat4[3][row] = -1 * eyePosition[row];
 	}
 
-	modelViewMat4 = rotationMat4 * translationMat4;
+	modelViewMat4 = rotWMat4 * rotUMat4 * rotVMat4 * rotationMat4 * translationMat4;
 }
 
 
@@ -117,7 +121,7 @@ void Camera::orientLookVec(glm::vec3 eyePoint, glm::vec3 lookVec, glm::vec3 upVe
 		translationMat4[3][row] = -1 * eyePosition[row];
 	}
 
-	modelViewMat4 = rotationMat4 * translationMat4;
+	modelViewMat4 = rotWMat4 * rotUMat4 * rotVMat4 * rotationMat4 * translationMat4;
 }
 
 glm::mat4 Camera::getScaleMatrix() {
@@ -174,12 +178,36 @@ void Camera::setScreenSize (int _screenWidth, int _screenHeight) {
 }
 
 void Camera::rotateV(float degrees) {
+	float radians = glm::radians(degrees);
+	glm::mat4 temp = glm::mat4(1.0);
+	temp[0][0] = glm::cos(radians);
+	temp[0][2] = glm::sin(radians);
+	temp[2][0] = -glm::sin(radians);
+	temp[2][2] = glm::cos(radians);
+
+	rotVMat4 *= temp;
 }
 
 void Camera::rotateU(float degrees) {
+	float radians = glm::radians(degrees);
+	glm::mat4 temp = glm::mat4(1.0);
+	temp[1][1] = glm::cos(radians);
+	temp[1][2] = glm::sin(radians);
+	temp[2][1] = -glm::sin(radians);
+	temp[2][2] = glm::cos(radians);
+
+	rotUMat4 *= temp;
 }
 
 void Camera::rotateW(float degrees) {
+	float radians = glm::radians(degrees);
+	glm::mat4 temp = glm::mat4(1.0);
+	temp[0][0] = glm::cos(radians);
+	temp[0][1] = glm::sin(radians);
+	temp[1][0] = -glm::sin(radians);
+	temp[1][1] = glm::cos(radians);
+
+	rotWMat4 *= temp;
 }
 
 void Camera::translate(glm::vec3 v) {
@@ -187,7 +215,6 @@ void Camera::translate(glm::vec3 v) {
 }
 
 void Camera::rotate(glm::vec3 point, glm::vec3 axis, float degrees) {
-
 }
 
 

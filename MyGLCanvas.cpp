@@ -99,7 +99,7 @@ void MyGLCanvas::draw() {
 		glEnable(GL_DEPTH_TEST);
 		glPolygonOffset(1, 1);
 		glFrontFace(GL_CCW); //make sure that the ordering is counter-clock wise
-		//glEnable(GL_RESCALE_NORMAL);
+		glEnable(GL_RESCALE_NORMAL);
 	}
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

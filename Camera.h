@@ -20,17 +20,6 @@ class Camera {
 public:
 	float rotU, rotV, rotW;  //values used by the callback in main.cpp
 
-	glm::vec3 lookVector;
-	glm::vec3 eyePosition;
-	glm::vec3 upVector;
-	glm::mat4 modelViewMat4;
-	glm::mat4 rotationMat4;
-	glm::mat4 translationMat4;
-	glm::mat4 invModelViewMat4;
-	glm::mat4 projMat4;
-	glm::mat4 unhingeMat4;
-	glm::mat4 invScaleMat4;
-	glm::mat4 scaleMat4;
 	Camera();
 	~Camera();
 
@@ -73,6 +62,22 @@ public:
 	float getScreenWidthRatio();
 
 private:
+
+	glm::vec3 lookVector;
+	glm::vec3 eyePosition;
+	glm::vec3 upVector;
+	glm::mat4 modelViewMat4;
+	glm::mat4 rotationMat4;
+	glm::mat4 translationMat4;
+	glm::mat4 invModelViewMat4;
+	glm::mat4 projMat4;
+	glm::mat4 unhingeMat4;
+	glm::mat4 invScaleMat4;
+	glm::mat4 scaleMat4;
+	glm::mat4 rotUMat4;
+	glm::mat4 rotVMat4;
+	glm::mat4 rotWMat4;
+
 	float viewAngle, filmPlanDepth;
 	float nearPlane, farPlane;
 	int screenWidth, screenHeight;
